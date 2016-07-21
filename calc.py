@@ -1,18 +1,15 @@
 import sys
 import os
-# See note in pokedex.py regarding this.
-from pokedex import pokedex
+import json
 
-# Anything that's programmatically determined later in the script, or that's 
-# input by the user, doesn't need to be declared here in advance with a 
-# non-useful value, unless you're using it to catch exceptions. If you 
-# are doing so, use the false boolean, rather than integer values.
-numPoke = 0
-numEvolv = 0
-numCandy = -1
-numPokeNew = 0
-numCandyNew = 0
-numEvolvcount = 0
+numPoke = False
+numEvolv = False
+numCandy = False
+numPokeNew = False
+numCandyNew = False
+numEvolvcount = False
+with open('pokedex.json', 'r') as f:
+	pokedex = json.load(f)
 
 #command to use an .ini file for settings
 #settings=ReadSettings(os.path.dirname(sys.argv[0]), "autoProcess.ini", logger=log)
@@ -34,21 +31,29 @@ print "Daryl's PokemonGo Lucky Egg Evolution calculator"
 #
 # If you later architect the script to run on a loop overall, I'd suggest 
 # packing the whole script into a loop that iterates on command line arguments
-while numEvolv == 0:
-        pokeName = str(raw_input("Enter the name of your Pokemon: ").lower())
-	for key in pokedex:
-                if str(key) == pokeName:
-                        numEvolv = pokedex[pokeName]
 
+try:
+	pokeName = str(raw_input("Enter the name of your Pokemon: ").lower())
+	numEvolv = pokedex[pokeName]
+except:
+	print "Either you've spelled your Poke's name wrong, or your Poke cannot be evolved."
+	exit(1)
 # See above note about loops. In this case, you're trying to use a loop to 
 # replace a conditional, though the conditional doesn't need to be there 
 # anyway. What you really want is a try-except clause to take corrective
 # action if the input doesn't match what is expected.
-while numPoke <= 0:
+try:
 	numPoke = int(input("How many " + pokeName + " do you have? "))
-while numCandy < 0:
+	numPoke >= 0
+except:
+	print "Please enter a number"
+	exit(2)
+try:
 	numCandy = int(input("How many " + pokeName + " candy do you have? "))
-
+	numCandy >= 0
+except:
+	print "Please enter a number"
+	exit(3)
 # I don't see anything that really needs improvement past here, except for the
 # best practices mentioned above regarding variable declaration. 
 if (numCandy % numEvolv) != 0:
